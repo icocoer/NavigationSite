@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,7 +9,6 @@
     <style>
         body {
             font-family: 'Roboto', sans-serif;
-            background-color: #f0f4f8;
             margin: 0;
             padding: 0;
             display: flex;
@@ -16,6 +16,7 @@
             justify-content: center;
             align-items: center;
             height: 100vh;
+            background-image: linear-gradient(75deg, #9cbbf5, #3dd0ea);
         }
         .search-container {
             display: flex;
@@ -24,19 +25,31 @@
             width: 80%;
             max-width: 800px;
         }
-        .search-container select, .search-container input[type="text"], .search-container button {
+        .search-container select,
+        .search-container input[type="text"],
+        .search-container button {
             padding: 15px;
             margin: 5px;
             border-radius: 5px;
-            border: 1px solid #ccc;
+            border: 1px solid #bababa;
         }
         .search-container select {
             background-color: #ffffff;
+            border-radius: 40px;
         }
         .search-container input[type="text"] {
             flex-grow: 1;
             font-size: 1.2em;
+            border: olive;
+            border-radius: 40px;
         }
+        .search-container input[type="text"]::placeholder {
+            color: #bababa;
+        }
+        .search-container input:hover {
+            background-image: linear-gradient(-75deg, rgb(169, 167, 167), #ffffff);
+        }
+
         .search-container button {
             background-color: #007bff;
             color: #ffffff;
@@ -44,6 +57,8 @@
             cursor: pointer;
             transition: background-color 0.3s;
             font-size: 1.2em;
+            font-weight: bold;
+            border-radius: 20px;
         }
         .search-container button:hover {
             background-color: #0056b3;
@@ -94,7 +109,8 @@
         .add-link-form {
             margin-top: 20px;
         }
-        .add-link-form input[type="text"], .add-link-form button {
+        .add-link-form input[type="text"],
+        .add-link-form button {
             padding: 10px;
             margin: 5px;
             border-radius: 5px;
@@ -110,28 +126,62 @@
         .add-link-form button:hover {
             background-color: #218838;
         }
+        .logo {
+            font-size: 5em;
+            color: #ffffff;
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+            user-select: none;
+        }
+        /* 自定义下拉框样式 */
+        #search-engine {
+            appearance: none;
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            padding-left: 50px;
+            background-image: linear-gradient(-75deg, #9cbbf5, #3dd0ea);
+        }
+
+        #search-engine option {
+            padding-left: 50px;
+        }
+
+        /* 初始状态显示第一个选项的图片 */
+        #search-engine::before {
+            content: "";
+            position: absolute;
+            left: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 30px;
+            height: 30px;
+            background-image: url('https://www.baidu.com/img/flexible/logo/pc/result.png');
+            background-size: cover;
+        }
     </style>
 </head>
+
 <body>
+    <div class="logo">
+        <p>icocoer</p>
+    </div>
     <div class="search-container">
         <select id="search-engine">
-            <option value="https://www.baidu.com/s?wd=">Baidu</option>
-            <option value="https://www.google.com/search?q=">Google</option>
-            <option value="https://www.bing.com/search?q=">Bing</option>
-            <option value="https://search.yahoo.com/search?p=">Yahoo</option>
-            <option value="https://duckduckgo.com/?q=">DuckDuckGo</option>
-            <option value="https://www.ask.com/web?q=">Ask</option>
+            <!-- 添加 data-image 属性存储图片路径 -->
+            <option value="https://www.baidu.com/s?wd=" data-image="https://www.baidu.com/img/flexible/logo/pc/result.png">baidu</option>
+            <option value="https://www.google.com/search?q=" data-image="google.png">Google</option>
+            <option value="https://search.bilibili.com/all?keyword=" data-image="https://www.img520.com/avbTwp.png">Bilibili</option>
         </select>
-        <input type="text" id="search-query" placeholder="Search...">
-        <button onclick="performSearch()">Search</button>
+        <input type="text" id="search-query" placeholder="Search...">   
+        <button onclick="performSearch()">搜索</button>
     </div>
     <div class="navigation-container">
-        <h2>Navigation Links</h2>
+        <h2>导航页</h2>
         <div id="links" class="links"></div>
         <form class="add-link-form" onsubmit="addLink(event)">
             <input type="text" id="new-link-name" placeholder="Link Name" required>
             <input type="text" id="new-link-url" placeholder="Link URL" required>
-            <button type="submit">Add Link</button>
+            <button type="submit">添加</button>
         </form>
     </div>
     <script>
@@ -142,6 +192,19 @@
                     e.preventDefault();
                     performSearch();
                 }
+            });
+            // 处理 select 选择事件
+            const searchEngineSelect = document.getElementById('search-engine');
+            searchEngineSelect.addEventListener('change', function () {
+                const selectedOption = this.options[this.selectedIndex];
+                const imageUrl = selectedOption.getAttribute('data-image');
+                // 更新显示的图片
+                const selectElement = document.getElementById('search-engine');
+                selectElement.style.backgroundImage = `linear-gradient(-75deg, #9cbbf5, #3dd0ea), url('${imageUrl}')`;
+                selectElement.style.backgroundImage = `url('${imageUrl}')`;
+                selectElement.style.backgroundSize = '30px';
+                selectElement.style.backgroundRepeat = 'no-repeat';
+                selectElement.style.backgroundPosition = '10px center';
             });
         });
 
@@ -173,7 +236,7 @@
             const linkWrapper = document.createElement('div');
             linkWrapper.className = 'link';
             const newLink = document.createElement('a');
-            newLink.href = 'https://'+url;
+            newLink.href = 'https://' + url;
             newLink.target = '_blank'; // 在新页面中打开链接
             newLink.textContent = name;
             newLink.style.flexGrow = '1';
@@ -187,11 +250,12 @@
 
         function deleteLink(name) {
             let links = JSON.parse(localStorage.getItem('links')) || [];
-            links = links.filter(link => link.name !== name);
+            links = links.filter(link => link.name!== name);
             localStorage.setItem('links', JSON.stringify(links));
             document.getElementById('links').innerHTML = '';
             loadLinks();
         }
     </script>
 </body>
+
 </html>
